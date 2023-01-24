@@ -12,7 +12,7 @@ public partial class MainForm : Form
     internal ListBox? toolLstBox;
     internal TreeView? ctrlTree;
     // internal cls_user_datagridview? eventView;
-    private string sourceFileName = "";
+    // private string sourceFileName = "";
 
     public MainForm()
     {
@@ -84,7 +84,7 @@ public partial class MainForm : Form
     }
     private void Add_Declaration(ref List<string> decHandler, ref List<string> decFunc)
     {
-        for (int i = 0; i < userForm.decHandler.Count; i++)
+        for (int i = 0; i < userForm!.decHandler.Count; i++)
         {
             decHandler.Add(userForm.decHandler[i]);
             decFunc.Add(userForm.decFunc[i]);
@@ -199,7 +199,7 @@ public partial class MainForm : Form
     private string Create_Code_Suspend_Resume(string source, List<string> lstSuspend, List<string> lstResume, string space)
     {
         // Suspend & resume
-        for (int i = 0; i < userForm.CtrlItems.Count; i++)
+        for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             if (userForm.CtrlItems[i].className!.IndexOf("Material") > -1)
             {
@@ -260,7 +260,7 @@ public partial class MainForm : Form
     private string Create_Code_FuncDeclaration(string source)
     {
         // control
-        for (int i = 0; i < userForm.CtrlItems.Count; i++)
+        for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             for (int j = 0; j < userForm.CtrlItems[i].decFunc.Count; j++)
             {
@@ -292,7 +292,7 @@ public partial class MainForm : Form
         source += "\r\n";
 
         // declaration
-        for (int i = 0; i < userForm.CtrlItems.Count; i++)
+        for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             string[] split = userForm.CtrlItems[i].ctrl!.GetType().ToString().Split(".");
             string dec;
@@ -313,7 +313,7 @@ public partial class MainForm : Form
     private string Create_Code_FormAddControl(string source, string space)
     {
         // AddControl
-        for (int i = 0; i < userForm.CtrlItems.Count; i++)
+        for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             if (userForm.CtrlItems[i].ctrl!.Parent == userForm)
             {
@@ -356,7 +356,7 @@ public partial class MainForm : Form
     private string Create_Code_Property(string source, string space)
     {
         // Property
-        for (int i = 0; i < userForm.CtrlItems.Count; i++)
+        for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             string memCode = "";
             source += space + "    //\r\n";
@@ -424,19 +424,19 @@ public partial class MainForm : Form
     private string Create_Code_AddControl(string source, string space, int i)
     {
         // AddControl
-        for (int j = 0; j < userForm.CtrlItems.Count; j++)
+        for (int j = 0; j < userForm!.CtrlItems.Count; j++)
         {
-            if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent.Name)
+            if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent!.Name)
             {
                 source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
             }
-            else if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent.Parent.Name)
+            else if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent!.Parent!.Name)
             {
-                if (userForm.CtrlItems[j].ctrl!.Parent.Name.IndexOf("Panel1") > -1)
+                if (userForm.CtrlItems[j].ctrl!.Parent!.Name.IndexOf("Panel1") > -1)
                 {
                     source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
                 }
-                else if (userForm.CtrlItems[j].ctrl!.Parent.Name.IndexOf("Panel2") > -1)
+                else if (userForm.CtrlItems[j].ctrl!.Parent!.Name.IndexOf("Panel2") > -1)
                 {
                     source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
                 }
