@@ -16,6 +16,10 @@ namespace SWD4CS
         private int grid = 4;
         internal int cnt_Control = -1;
         internal List<cls_controls> CtrlItems = new();
+        internal List<string> decHandler = new();
+        internal List<string> decFunc = new();
+
+
 
         public cls_userform()
         {
