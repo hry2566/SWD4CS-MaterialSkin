@@ -162,6 +162,7 @@ partial class MainForm
         this.designeTab.Name =  "designeTab";
         this.designeTab.Size = new System.Drawing.Size(523,606);
         this.designeTab.TabIndex = 1;
+        this.designeTab.SelectedIndexChanged += new System.EventHandler(designeTab_SelectedIndexChanged);
         //
         // designePage
         //
@@ -249,7 +250,7 @@ partial class MainForm
         this.tabControl1.ItemSize = new System.Drawing.Size(57,20);
         this.tabControl1.Text =  "TabControl2";
         this.tabControl1.Name =  "tabControl1";
-        this.tabControl1.Size = new System.Drawing.Size(269,576);
+        this.tabControl1.Size = new System.Drawing.Size(269,578);
         this.tabControl1.TabIndex = 15;
         this.tabControl1.Location = new System.Drawing.Point(4,32);
         this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
@@ -262,7 +263,7 @@ partial class MainForm
         this.tabPage3.TabIndex = 16;
         this.tabPage3.Text =  "Property";
         this.tabPage3.Name =  "tabPage3";
-        this.tabPage3.Size = new System.Drawing.Size(261,548);
+        this.tabPage3.Size = new System.Drawing.Size(261,550);
         //
         // nameTxtBox
         //
@@ -288,7 +289,7 @@ partial class MainForm
         this.propertyBox.Text =  "PropertyGrid0";
         this.propertyBox.Dock = System.Windows.Forms.DockStyle.Fill;
         this.propertyBox.Name =  "propertyBox";
-        this.propertyBox.Size = new System.Drawing.Size(261,548);
+        this.propertyBox.Size = new System.Drawing.Size(261,550);
         this.propertyBox.TabIndex = 19;
         //
         // tabPage4
@@ -297,7 +298,7 @@ partial class MainForm
         this.tabPage4.TabIndex = 20;
         this.tabPage4.Text =  "Event";
         this.tabPage4.Name =  "tabPage4";
-        this.tabPage4.Size = new System.Drawing.Size(261,548);
+        this.tabPage4.Size = new System.Drawing.Size(261,550);
         //
         // statusStrip1
         //
@@ -367,4 +368,9 @@ partial class MainForm
     private TabPage tabPage4;
     private StatusStrip statusStrip1;
 }
+
+//private void designeTab_SelectedIndexChanged(System.Object? sender, System.EventArgs e)
+//{
+//
+//}
 
