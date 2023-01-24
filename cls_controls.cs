@@ -153,7 +153,7 @@ namespace SWD4CS
                     _ = new cls_controls(form, form!.mainForm!.toolLstBox!.Text, splitpanel!, X, Y);
                 }
             }
-            form!.mainForm!.toolLstBox!.SelectedIndex = -1;
+            form!.mainForm!.toolLstBox!.SelectedIndex = 0;
         }
 
         private void CreateTrancePanel(Control ctrl)
