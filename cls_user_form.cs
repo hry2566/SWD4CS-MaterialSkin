@@ -19,7 +19,8 @@ namespace SWD4CS
         internal List<string> decHandler = new();
         internal List<string> decFunc = new();
 
-
+        // internal ImageList imgLst;
+        // private System.ComponentModel.IContainer components = null;
 
         public cls_userform()
         {
@@ -28,12 +29,26 @@ namespace SWD4CS
             this.Click += new EventHandler(Form_Click);
 
             this.TopLevel = false;
+            this.Text = "Form1";
             this.Show();
 
             var materialSkinManager = MaterialSkinManager.Instance;
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
+
+            // 
+            // imageList1
+            // 
+            // System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            // this.imgLst.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
+            // this.imgLst.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgLst.ImageStream")));
+            // this.imgLst.TransparentColor = System.Drawing.Color.Transparent;
+            // this.imgLst.Images.SetKeyName(0, "close_FILL1_wght400_GRAD0_opsz48.png");
+            // this.imgLst.Images.SetKeyName(1, "home_FILL1_wght400_GRAD0_opsz48.png");
+            // this.imgLst.Images.SetKeyName(2, "menu_FILL1_wght400_GRAD0_opsz48.png");
+            // this.imgLst.Images.SetKeyName(3, "settings_FILL1_wght400_GRAD0_opsz48.png");
+            // this.imgLst = new System.Windows.Forms.ImageList(this.components);
         }
 
         // ********************************************************************************************
