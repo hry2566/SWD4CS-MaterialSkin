@@ -122,7 +122,8 @@
         private static List<CONTROL_INFO> AnalysisCode(string line, List<CONTROL_INFO> lstCtrlInfo)
         {
             if (line.IndexOf("=") > -1 && line.IndexOf("new") > -1 &&
-                line.IndexOf("System.Windows.Forms.") > -1 && line.IndexOf("+=") == -1)
+                (line.IndexOf("System.Windows.Forms.") > -1 && line.IndexOf("+=") == -1) ||
+                (line.IndexOf("MaterialSkin.Controls.") > -1 && line.IndexOf("+=") == -1))
             {
                 lstCtrlInfo = AnalysisCode_Control_Declaration(line, lstCtrlInfo);
             }
