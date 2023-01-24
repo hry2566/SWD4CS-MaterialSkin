@@ -10,9 +10,18 @@ public partial class MainForm : Form
     internal PropertyGrid? propertyGrid;
     internal TextBox? propertyCtrlName;
     internal ListBox? toolLstBox;
-    internal TreeView? ctrlTree;
+    // internal TreeView? ctrlTree;
+
+    private MenuStrip? menuStrip1;
+    private ToolStripMenuItem? fileToolStripMenuItem;
+    private ToolStripMenuItem? openToolStripMenuItem;
+    private ToolStripMenuItem? saveToolStripMenuItem;
+    private ToolStripMenuItem? closeToolStripMenuItem;
+    private ToolStripMenuItem? editToolStripMenuItem;
+    private ToolStripMenuItem? deleteToolStripMenuItem;
+
     // internal cls_user_datagridview? eventView;
-    // private string sourceFileName = "";
+    private string sourceFileName = "";
 
     public MainForm()
     {
@@ -25,25 +34,127 @@ public partial class MainForm : Form
 
     private void Init_OtherControls()
     {
-        userForm = new SWD4CS.cls_userform();
+        this.userForm = new SWD4CS.cls_userform();
+        this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+        this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+        this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
         // 
         // userForm
         // 
-        userForm.Location = new System.Drawing.Point(16, 16);
-        userForm.Size = new System.Drawing.Size(480, 400);
-        userForm.TabIndex = 0;
-        userForm!.Init(this, designePage);
+        this.userForm.Location = new System.Drawing.Point(16, 16);
+        this.userForm.Size = new System.Drawing.Size(480, 400);
+        this.userForm.TabIndex = 0;
+        this.userForm!.Init(this, designePage);
+        // 
+        // menuStrip1
+        // 
+        this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
+        this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.editToolStripMenuItem});
+        this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+        this.menuStrip1.Name = "menuStrip1";
+        this.menuStrip1.Size = new System.Drawing.Size(1003, 28);
+        this.menuStrip1.TabIndex = 2;
+        this.menuStrip1.Text = "menuStrip1";
+        // 
+        // fileToolStripMenuItem
+        // 
+        this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.closeToolStripMenuItem});
+        this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+        this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 24);
+        this.fileToolStripMenuItem.Text = "File";
+        // 
+        // openToolStripMenuItem
+        // 
+        this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+        this.openToolStripMenuItem.Size = new System.Drawing.Size(128, 26);
+        this.openToolStripMenuItem.Text = "Open";
+        this.openToolStripMenuItem.Click += new System.EventHandler(this.openToolStripMenuItem_Click);
+        // 
+        // saveToolStripMenuItem
+        // 
+        this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+        this.saveToolStripMenuItem.Size = new System.Drawing.Size(128, 26);
+        this.saveToolStripMenuItem.Text = "Save";
+        this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+        // 
+        // closeToolStripMenuItem
+        // 
+        this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+        this.closeToolStripMenuItem.Size = new System.Drawing.Size(128, 26);
+        this.closeToolStripMenuItem.Text = "Close";
+        this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
+        // 
+        // editToolStripMenuItem
+        // 
+        this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.deleteToolStripMenuItem});
+        this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+        this.editToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
+        this.editToolStripMenuItem.Text = "Edit";
+        // 
+        // deleteToolStripMenuItem
+        // 
+        this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+        this.deleteToolStripMenuItem.Size = new System.Drawing.Size(210, 26);
+        this.deleteToolStripMenuItem.Text = "Delete (Alt + Del)";
+        this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
 
         this.designePage.Controls.Add(this.userForm);
+        this.Controls.Add(this.menuStrip1);
+        // this.MainMenuStrip = this.menuStrip1;
 
 
     }
+
+    private void deleteToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void closeToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        throw new NotImplementedException();
+    }
+
+    private void saveToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        designeTab.SelectedIndex = 0;
+        designeTab.SelectedIndex = 1;
+
+        if (sourceFileName != "")
+        {
+            cls_file.SaveAs(sourceFileName, sourceTxtBox.Text);
+        }
+        else
+        {
+            cls_file.Save(sourceTxtBox.Text);
+        }
+        Close();
+    }
+
+    private void openToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        fileInfo = cls_file.OpenFile();
+        sourceFileName = fileInfo.source_FileName;
+        logTxtBox.Text = "";
+        userForm!.Add_Controls(fileInfo.ctrlInfo);
+    }
+
     private void Private2Internal_Controls()
     {
         propertyGrid = propertyBox;
         propertyCtrlName = nameTxtBox;
         toolLstBox = ctrlLstBox;
-        ctrlTree = ctrlTreeView;
+        // ctrlTree = ctrlTreeView;
         // eventView = evtGridView;
     }
 
