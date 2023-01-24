@@ -906,6 +906,9 @@ namespace SWD4CS
                 case "MaterialTextBox2":
                     this.ctrl = new MaterialTextBox2();
                     break;
+                // case "ImageList":
+                //     this.ctrl = new ImageList();
+                //     break;
                 default:
                     return false;
             }
@@ -979,6 +982,7 @@ namespace SWD4CS
             ctrlLstBox.Items.Add("MaterialTabSelector");
             ctrlLstBox.Items.Add("MaterialTextBox");
             ctrlLstBox.Items.Add("MaterialTextBox2");
+            // ctrlLstBox.Items.Add("ImageList");
 
             // MaterialButton;
             // MaterialCard;
