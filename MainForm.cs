@@ -28,8 +28,8 @@ public partial class MainForm : Form
         InitializeComponent();
         Private2Internal_Controls();
         Init_OtherControls();
-
         cls_controls.AddToolList(ctrlLstBox);
+        Run_CommandLine();
     }
 
     private void Init_OtherControls()
@@ -111,18 +111,26 @@ public partial class MainForm : Form
         this.designePage.Controls.Add(this.userForm);
         this.Controls.Add(this.menuStrip1);
         // this.MainMenuStrip = this.menuStrip1;
+    }
 
-
+    private void Run_CommandLine()
+    {
+        string[] cmds = System.Environment.GetCommandLineArgs();
+        if (cmds.Length < 2) { return; }
+        fileInfo = cls_file.CommandLine(cmds[1]);
+        sourceFileName = fileInfo.source_FileName;
+        logTxtBox.Text = "";
+        userForm!.Add_Controls(fileInfo.ctrlInfo);
     }
 
     private void deleteToolStripMenuItem_Click(object? sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        userForm!.RemoveSelectedItem();
     }
 
     private void closeToolStripMenuItem_Click(object? sender, EventArgs e)
     {
-        throw new NotImplementedException();
+        Close();
     }
 
     private void saveToolStripMenuItem_Click(object? sender, EventArgs e)
@@ -295,6 +303,12 @@ public partial class MainForm : Form
 
         // events function
         source = Create_Code_FuncDeclaration(source);
+
+        if (source.IndexOf("using MaterialSkin.Controls;") == -1)
+        {
+            string usingDec = "using MaterialSkin.Controls;\r\n\r\n";
+            source = usingDec + source;
+        }
         return source;
     }
     private string Create_Code_Instance(string source, string space)
