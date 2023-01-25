@@ -45,11 +45,9 @@ namespace SWD4CS
                     selectBox = new cls_selectbox(this, parent);
                     Selected = true;
                 }
-
                 ctrl!.Click += new System.EventHandler(Ctrl_Click);
                 ctrl.MouseMove += new System.Windows.Forms.MouseEventHandler(ControlMouseMove);
                 ctrl.MouseDown += new System.Windows.Forms.MouseEventHandler(ControlMouseDown);
-
             }
         }
         public cls_controls(cls_userform form, MaterialForm memForm, CONTROL_INFO ctrlInfo)
@@ -91,61 +89,10 @@ namespace SWD4CS
             //     form.mainForm!.Add_Log(log);
             // }
         }
-        private string Set_Ini_Form(CONTROL_INFO ctrlInfo, MaterialForm memForm)
-        {
-            string log = "";
-            // form_property
-            for (int i = 0; i < ctrlInfo.propertyName.Count; i++)
-            {
-                log += SetCtrlProperty(memForm, ctrlInfo.propertyName[i], ctrlInfo.strProperty[i]);
-                log += SetCtrlProperty(form, ctrlInfo.propertyName[i], ctrlInfo.strProperty[i]);
-            }
 
-            // events
-            for (int i = 0; i < ctrlInfo.decHandler.Count; i++)
-            {
-                string[] split = ctrlInfo.decHandler[i].Split("+=")[0].Split(".");
-                string eventName = split[split.Length - 1].Trim();
-                split = ctrlInfo.decHandler[i].Split("+=")[1].Split("(");
-                string funcName = split[split.Length - 1].Replace(");", "");
-
-                Type? delegateType = memForm.GetType().GetEvent(eventName!)!.EventHandlerType;
-                MethodInfo? invoke = delegateType!.GetMethod("Invoke");
-                ParameterInfo[] pars = invoke!.GetParameters();
-                split = delegateType.AssemblyQualifiedName!.Split(",");
-                string newHandler = "new " + split[0];
-                string funcParam = "";
-
-                foreach (ParameterInfo p in pars)
-                {
-                    string param = p.ParameterType.ToString();
-
-                    if (param == "System.Object")
-                    {
-                        param += "? sender";
-                    }
-                    else
-                    {
-                        param += " e";
-                    }
-
-                    if (funcParam == "")
-                    {
-                        funcParam = param;
-                    }
-                    else
-                    {
-                        funcParam += ", " + param;
-                    }
-                }
-                string decFunc = "private void " + funcName + "(" + funcParam + ")";
-                this.form!.decHandler.Add(ctrlInfo.decHandler[i]);
-                this.form.decFunc.Add(decFunc);
-
-                //Console.WriteLine("{0}", decFunc);
-            }
-            return log;
-        }
+        // ********************************************************************************************
+        // internal Function 
+        // ********************************************************************************************
         internal void SetControls(CONTROL_INFO ctrlInfo)
         {
             //add設定
@@ -220,7 +167,6 @@ namespace SWD4CS
             //        }
             //    }
             //}
-
         }
         internal void Delete()
         {
@@ -254,6 +200,194 @@ namespace SWD4CS
             {
                 return selectFlag;
             }
+        }
+        internal Control? GetBaseCtrl()
+        {
+            Type type = this.ctrl!.GetType();
+            Control? baseCtrl = (Control)Activator.CreateInstance(type)!;
+            return baseCtrl;
+        }
+        internal static string Property2String(Control ctrl, PropertyInfo item)
+        {
+            string strProperty = "";
+            Type type = item.GetValue(ctrl)!.GetType();
+            string str2 = item.GetValue(ctrl)!.ToString()!;
+
+            // Console.WriteLine(item.Name);
+            // Console.WriteLine(type);
+
+            switch (type)
+            {
+                case Type t when t == typeof(System.Drawing.Point):
+                    Point point = (Point)item.GetValue(ctrl)!;
+                    strProperty = " = new " + type.ToString() + "(" + point.X + "," + point.Y + ");";
+                    break;
+                case Type t when t == typeof(System.Drawing.Size):
+                    Size size = (Size)item.GetValue(ctrl)!;
+                    strProperty = " = new " + type.ToString() + "(" + size.Width + "," + size.Height + ");";
+                    break;
+                case Type t when t == typeof(System.String):
+                    strProperty = " =  " + "\"" + str2 + "\";";
+                    break;
+                case Type t when t == typeof(System.Boolean):
+                    strProperty = " =  " + str2.ToLower() + ";";
+                    break;
+                case Type t when t == typeof(System.Windows.Forms.AnchorStyles):
+                    strProperty = AnchorStyles2String(item.GetValue(ctrl));
+                    break;
+                case Type t when t == typeof(System.Int32):
+                    strProperty = " = " + int.Parse(str2) + ";";
+                    break;
+                case Type t when t == typeof(System.Windows.Forms.DockStyle) ||
+                                 t == typeof(System.Drawing.ContentAlignment) ||
+                                 t == typeof(System.Windows.Forms.ScrollBars) ||
+                                 t == typeof(System.Windows.Forms.HorizontalAlignment) ||
+                                 t == typeof(System.Windows.Forms.FormWindowState) ||
+                                 t == typeof(System.Windows.Forms.FixedPanel) ||
+                                 t == typeof(System.Windows.Forms.PictureBoxSizeMode) ||
+                                 t == typeof(System.Windows.Forms.View) ||
+                                 t == typeof(System.Windows.Forms.Orientation) ||
+                                 t == typeof(System.Windows.Forms.FormBorderStyle) ||
+                                 t == typeof(System.Windows.Forms.AutoScaleMode) ||
+                                 t == typeof(System.Windows.Forms.TableLayoutPanelCellBorderStyle) ||
+                                 t == typeof(System.Windows.Forms.FormStartPosition):
+
+                    strProperty = " = " + type.ToString() + "." + str2 + ";";
+                    break;
+                case Type t when t == typeof(System.Drawing.Color):
+                    strProperty = " = " + Property2Color(str2) + ";";
+                    break;
+                case Type t when t == typeof(System.Drawing.Font):
+                    strProperty = " = " + Property2Font(ctrl.Font) + ";";
+                    break;
+            }
+
+            return strProperty;
+        }
+        internal static bool HideProperty(string itemName)
+        {
+            List<string> propertyName = new()
+            {
+                "AccessibilityObject",
+                "BindingContext",
+                "Parent",
+                "TopLevelControl",
+                "DataSource",
+                "FirstDisplayedCell",
+                "Item",
+                "TopItem",
+                "Rtf",
+                "ParentForm",
+                "SelectedTab",
+                "Top",
+                "Left",
+                "Right",
+                "Bottom",
+                "Width",
+                "Height",
+                "CanSelect",
+                "Created",
+                "IsHandleCreated",
+                "PreferredSize",
+                "Visible",
+                "Enable",
+                "ClientSize",
+                "UseVisualStyleBackColor",
+                "PreferredHeight",
+                "ColumnCount",
+                "FirstDisplayedScrollingColumnIndex",
+                "FirstDisplayedScrollingRowIndex",
+                "NewRowIndex",
+                "RowCount",
+                "HasChildren",
+                "PreferredWidth",
+                "SingleMonthSize",
+                "TextLength",
+                "SelectedIndex",
+                "TabCount",
+                "VisibleCount",
+                "DesktopLocation",
+                "AutoScale",
+                "CanFocus",
+                "IsMirrored",
+                "SelectionStart",
+                "ContextMenuDefaultLocation",
+                "CanUndo",
+                "CompanyName",
+                "ProductName",
+                "ProductVersion",
+                "TopLevel",
+                "",
+                "",
+            };
+
+            for (int i = 0; i < propertyName.Count; i++)
+            {
+                if (propertyName[i] == itemName)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // ********************************************************************************************
+        // private Function 
+        // ********************************************************************************************
+        private string Set_Ini_Form(CONTROL_INFO ctrlInfo, MaterialForm memForm)
+        {
+            string log = "";
+            // form_property
+            for (int i = 0; i < ctrlInfo.propertyName.Count; i++)
+            {
+                log += SetCtrlProperty(memForm, ctrlInfo.propertyName[i], ctrlInfo.strProperty[i]);
+                log += SetCtrlProperty(form, ctrlInfo.propertyName[i], ctrlInfo.strProperty[i]);
+            }
+
+            // events
+            for (int i = 0; i < ctrlInfo.decHandler.Count; i++)
+            {
+                string[] split = ctrlInfo.decHandler[i].Split("+=")[0].Split(".");
+                string eventName = split[split.Length - 1].Trim();
+                split = ctrlInfo.decHandler[i].Split("+=")[1].Split("(");
+                string funcName = split[split.Length - 1].Replace(");", "");
+
+                Type? delegateType = memForm.GetType().GetEvent(eventName!)!.EventHandlerType;
+                MethodInfo? invoke = delegateType!.GetMethod("Invoke");
+                ParameterInfo[] pars = invoke!.GetParameters();
+                split = delegateType.AssemblyQualifiedName!.Split(",");
+                string newHandler = "new " + split[0];
+                string funcParam = "";
+
+                foreach (ParameterInfo p in pars)
+                {
+                    string param = p.ParameterType.ToString();
+
+                    if (param == "System.Object")
+                    {
+                        param += "? sender";
+                    }
+                    else
+                    {
+                        param += " e";
+                    }
+
+                    if (funcParam == "")
+                    {
+                        funcParam = param;
+                    }
+                    else
+                    {
+                        funcParam += ", " + param;
+                    }
+                }
+                string decFunc = "private void " + funcName + "(" + funcParam + ")";
+                this.form!.decHandler.Add(ctrlInfo.decHandler[i]);
+                this.form.decFunc.Add(decFunc);
+
+                //Console.WriteLine("{0}", decFunc);
+            }
+            return log;
         }
         private string Set_Ini_Controls(CONTROL_INFO ctrlInfo)
         {
@@ -430,12 +564,6 @@ namespace SWD4CS
                 memPos.X = (int)(e.X / grid) * grid;
                 memPos.Y = (int)(e.Y / grid) * grid;
             }
-        }
-        internal Control? GetBaseCtrl()
-        {
-            Type type = this.ctrl!.GetType();
-            Control? baseCtrl = (Control)Activator.CreateInstance(type)!;
-            return baseCtrl;
         }
         private static Size String2Size(string propertyValue)
         {
@@ -1037,64 +1165,6 @@ namespace SWD4CS
             }
             return "";
         }
-        internal static string Property2String(Control ctrl, PropertyInfo item)
-        {
-            string strProperty = "";
-            Type type = item.GetValue(ctrl)!.GetType();
-            string str2 = item.GetValue(ctrl)!.ToString()!;
-
-            // Console.WriteLine(item.Name);
-            // Console.WriteLine(type);
-
-            switch (type)
-            {
-                case Type t when t == typeof(System.Drawing.Point):
-                    Point point = (Point)item.GetValue(ctrl)!;
-                    strProperty = " = new " + type.ToString() + "(" + point.X + "," + point.Y + ");";
-                    break;
-                case Type t when t == typeof(System.Drawing.Size):
-                    Size size = (Size)item.GetValue(ctrl)!;
-                    strProperty = " = new " + type.ToString() + "(" + size.Width + "," + size.Height + ");";
-                    break;
-                case Type t when t == typeof(System.String):
-                    strProperty = " =  " + "\"" + str2 + "\";";
-                    break;
-                case Type t when t == typeof(System.Boolean):
-                    strProperty = " =  " + str2.ToLower() + ";";
-                    break;
-                case Type t when t == typeof(System.Windows.Forms.AnchorStyles):
-                    strProperty = AnchorStyles2String(item.GetValue(ctrl));
-                    break;
-                case Type t when t == typeof(System.Int32):
-                    strProperty = " = " + int.Parse(str2) + ";";
-                    break;
-                case Type t when t == typeof(System.Windows.Forms.DockStyle) ||
-                                 t == typeof(System.Drawing.ContentAlignment) ||
-                                 t == typeof(System.Windows.Forms.ScrollBars) ||
-                                 t == typeof(System.Windows.Forms.HorizontalAlignment) ||
-                                 t == typeof(System.Windows.Forms.FormWindowState) ||
-                                 t == typeof(System.Windows.Forms.FixedPanel) ||
-                                 t == typeof(System.Windows.Forms.PictureBoxSizeMode) ||
-                                 t == typeof(System.Windows.Forms.View) ||
-                                 t == typeof(System.Windows.Forms.Orientation) ||
-                                 t == typeof(System.Windows.Forms.FormBorderStyle) ||
-                                 t == typeof(System.Windows.Forms.AutoScaleMode) ||
-                                 t == typeof(System.Windows.Forms.TableLayoutPanelCellBorderStyle) ||
-                                 t == typeof(System.Windows.Forms.FormStartPosition):
-
-                    strProperty = " = " + type.ToString() + "." + str2 + ";";
-                    break;
-                case Type t when t == typeof(System.Drawing.Color):
-                    strProperty = " = " + Property2Color(str2) + ";";
-                    break;
-                case Type t when t == typeof(System.Drawing.Font):
-                    strProperty = " = " + Property2Font(ctrl.Font) + ";";
-                    break;
-            }
-
-            return strProperty;
-        }
-
         private static string Property2Font(Font font)
         {
             string[] split = font.ToString().Split(",");
@@ -1121,38 +1191,6 @@ namespace SWD4CS
             }
 
             string strProperty = "new System.Drawing.Font(\"" + font.Name + "\", " + strSize + strStyle;
-            return strProperty;
-        }
-
-        private static string AnchorStyles2String(object? propertyinfo)
-        {
-            string strProperty;
-            string[] split = propertyinfo!.ToString()!.Split(',');
-            Type type = propertyinfo.GetType();
-            string str2 = propertyinfo.ToString()!;
-
-            if (split.Length == 1)
-            {
-                strProperty = " = " + type.ToString() + "." + str2 + ";";
-            }
-            else
-            {
-                string ancho = "";
-
-                for (int j = 0; j < split.Length; j++)
-                {
-                    if (j == 0)
-                    {
-                        ancho = "(" + type.ToString() + "." + split[j].Trim();
-                    }
-                    else
-                    {
-                        ancho = "(" + ancho + " | " + type.ToString() + "." + split[j].Trim() + ")";
-                    }
-                }
-                ancho = "((" + type.ToString() + ")" + ancho + "));";
-                strProperty = " = " + ancho;
-            }
             return strProperty;
         }
         private static string Property2Color(string color)
@@ -1367,73 +1405,36 @@ namespace SWD4CS
             strRGB += split[1] + "," + split[2] + "," + split[3] + ")";
             return strRGB;
         }
-
-
-        internal static bool HideProperty(string itemName)
+        private static string AnchorStyles2String(object? propertyinfo)
         {
-            List<string> propertyName = new()
-            {
-                "AccessibilityObject",
-                "BindingContext",
-                "Parent",
-                "TopLevelControl",
-                "DataSource",
-                "FirstDisplayedCell",
-                "Item",
-                "TopItem",
-                "Rtf",
-                "ParentForm",
-                "SelectedTab",
-                "Top",
-                "Left",
-                "Right",
-                "Bottom",
-                "Width",
-                "Height",
-                "CanSelect",
-                "Created",
-                "IsHandleCreated",
-                "PreferredSize",
-                "Visible",
-                "Enable",
-                "ClientSize",
-                "UseVisualStyleBackColor",
-                "PreferredHeight",
-                "ColumnCount",
-                "FirstDisplayedScrollingColumnIndex",
-                "FirstDisplayedScrollingRowIndex",
-                "NewRowIndex",
-                "RowCount",
-                "HasChildren",
-                "PreferredWidth",
-                "SingleMonthSize",
-                "TextLength",
-                "SelectedIndex",
-                "TabCount",
-                "VisibleCount",
-                "DesktopLocation",
-                "AutoScale",
-                "CanFocus",
-                "IsMirrored",
-                "SelectionStart",
-                "ContextMenuDefaultLocation",
-                "CanUndo",
-                "CompanyName",
-                "ProductName",
-                "ProductVersion",
-                "TopLevel",
-                "",
-                "",
-            };
+            string strProperty;
+            string[] split = propertyinfo!.ToString()!.Split(',');
+            Type type = propertyinfo.GetType();
+            string str2 = propertyinfo.ToString()!;
 
-            for (int i = 0; i < propertyName.Count; i++)
+            if (split.Length == 1)
             {
-                if (propertyName[i] == itemName)
-                {
-                    return false;
-                }
+                strProperty = " = " + type.ToString() + "." + str2 + ";";
             }
-            return true;
+            else
+            {
+                string ancho = "";
+
+                for (int j = 0; j < split.Length; j++)
+                {
+                    if (j == 0)
+                    {
+                        ancho = "(" + type.ToString() + "." + split[j].Trim();
+                    }
+                    else
+                    {
+                        ancho = "(" + ancho + " | " + type.ToString() + "." + split[j].Trim() + ")";
+                    }
+                }
+                ancho = "((" + type.ToString() + ")" + ancho + "));";
+                strProperty = " = " + ancho;
+            }
+            return strProperty;
         }
 
         // ****************************************************************************************
@@ -1817,40 +1818,6 @@ namespace SWD4CS
             ctrlLstBox.Items.Add("MaterialTabSelector");
             ctrlLstBox.Items.Add("MaterialTextBox");
             ctrlLstBox.Items.Add("MaterialTextBox2");
-
-            // MaterialButton;
-            // MaterialCard;
-            // MaterialCheckbox;
-            // MaterialCheckedListBox;
-            // MaterialComboBox;
-            // MaterialContextMenuStrip;
-            // MaterialDialog;
-            // MaterialDivider;
-            // MaterialDrawer;
-            // MaterialExpansionPanel;
-            // MaterialFloatingActionButton;
-            // MaterialForm;
-            // MaterialItemCollectionEditor;
-            // MaterialLabel;
-            // MaterialListBox;
-            // MaterialMaskedTextBox;
-            // MaterialMessageBox;
-            // MaterialMultiLineTextBox;
-            // MaterialMultiLineTextBox2;
-            // MaterialProgressBar;
-            // MaterialRadioButton;
-            // MaterialScrollBar;
-            // MaterialScrollOrientation;
-            // MaterialSkin;
-            // MaterialSlider;
-            // MaterialSnackBar;
-            // MaterialSwitch;
-            // MaterialTabControl;
-            // MaterialTabSelector;
-            // MaterialTextBox;
-            // MaterialTextBox2;
-            // MaterialToolStripMenuItem;
-
         }
     }
 }
