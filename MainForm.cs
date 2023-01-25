@@ -19,7 +19,6 @@ public partial class MainForm : Form
     private ToolStripMenuItem? closeToolStripMenuItem;
     private ToolStripMenuItem? editToolStripMenuItem;
     private ToolStripMenuItem? deleteToolStripMenuItem;
-
     // internal cls_user_datagridview? eventView;
     private string sourceFileName = "";
 
@@ -32,6 +31,17 @@ public partial class MainForm : Form
         Run_CommandLine();
     }
 
+    // ********************************************************************************************
+    // private Function 
+    // ********************************************************************************************
+    private void Private2Internal_Controls()
+    {
+        propertyGrid = propertyBox;
+        propertyCtrlName = nameTxtBox;
+        toolLstBox = ctrlLstBox;
+        // ctrlTree = ctrlTreeView;
+        // eventView = evtGridView;
+    }
     private void Init_OtherControls()
     {
         this.userForm = new SWD4CS.cls_userform();
@@ -110,9 +120,7 @@ public partial class MainForm : Form
 
         this.designePage.Controls.Add(this.userForm);
         this.Controls.Add(this.menuStrip1);
-        // this.MainMenuStrip = this.menuStrip1;
     }
-
     private void Run_CommandLine()
     {
         string[] cmds = System.Environment.GetCommandLineArgs();
@@ -122,71 +130,10 @@ public partial class MainForm : Form
         logTxtBox.Text = "";
         userForm!.Add_Controls(fileInfo.ctrlInfo);
     }
-
-    private void deleteToolStripMenuItem_Click(object? sender, EventArgs e)
-    {
-        userForm!.RemoveSelectedItem();
-    }
-
-    private void closeToolStripMenuItem_Click(object? sender, EventArgs e)
-    {
-        Close();
-    }
-
-    private void saveToolStripMenuItem_Click(object? sender, EventArgs e)
-    {
-        designeTab.SelectedIndex = 0;
-        designeTab.SelectedIndex = 1;
-
-        if (sourceFileName != "")
-        {
-            cls_file.SaveAs(sourceFileName, sourceTxtBox.Text);
-        }
-        else
-        {
-            cls_file.Save(sourceTxtBox.Text);
-        }
-        Close();
-    }
-
-    private void openToolStripMenuItem_Click(object? sender, EventArgs e)
-    {
-        fileInfo = cls_file.OpenFile();
-        sourceFileName = fileInfo.source_FileName;
-        logTxtBox.Text = "";
-        userForm!.Add_Controls(fileInfo.ctrlInfo);
-    }
-
-    private void Private2Internal_Controls()
-    {
-        propertyGrid = propertyBox;
-        propertyCtrlName = nameTxtBox;
-        toolLstBox = ctrlLstBox;
-        // ctrlTree = ctrlTreeView;
-        // eventView = evtGridView;
-    }
-
-    private void designeTab_SelectedIndexChanged(System.Object? sender, System.EventArgs e)
-    {
-        switch (designeTab.SelectedIndex)
-        {
-            case 1:
-                if (fileInfo.source_base == null)
-                {
-                    fileInfo.source_base = cls_file.NewFile();
-                }
-                sourceTxtBox.Text = Create_SourceCode();
-                break;
-            case 2:
-                eventTxtBox.Text = Create_EventCode();
-                break;
-        }
-    }
     private string Create_EventCode()
     {
         List<string> decHandler = new();
         List<string> decFunc = new();
-
         Add_Declaration(ref decHandler, ref decFunc);
 
         if (decHandler.Count == 0) { return ""; }
@@ -198,7 +145,6 @@ public partial class MainForm : Form
 
         string[] split = Create_SourceCode().Split(Environment.NewLine);
         string eventSource = Create_EventsSource(split, decHandler, decFunc);
-
         return eventSource;
     }
     private void Add_Declaration(ref List<string> decHandler, ref List<string> decFunc)
@@ -238,7 +184,6 @@ public partial class MainForm : Form
         eventSource += "    private void InitializeEvents()" + Environment.NewLine;
         eventSource += "    {" + Environment.NewLine;
 
-
         for (int i = 0; i < decHandler.Count; i++)
         {
             eventSource += "        " + decHandler[i] + Environment.NewLine;
@@ -252,9 +197,7 @@ public partial class MainForm : Form
             eventSource += "    {" + Environment.NewLine + Environment.NewLine;
             eventSource += "    }" + Environment.NewLine + Environment.NewLine;
         }
-
         eventSource += "}" + Environment.NewLine;
-
         return eventSource;
     }
     private string Create_SourceCode()
@@ -296,17 +239,17 @@ public partial class MainForm : Form
 
         if (fileInfo.source_base[0].IndexOf(";") == -1)
         {
-            source += "    }\r\n";
+            source += "    }" + Environment.NewLine;
         }
-        source += "}\r\n";
-        source += "\r\n";
+        source += "}" + Environment.NewLine;
+        source += Environment.NewLine;
 
         // events function
         source = Create_Code_FuncDeclaration(source);
 
         if (source.IndexOf("using MaterialSkin.Controls;") == -1)
         {
-            string usingDec = "using MaterialSkin.Controls;\r\n\r\n";
+            string usingDec = "using MaterialSkin.Controls;" + Environment.NewLine + Environment.NewLine;
             source = usingDec + source;
         }
         return source;
@@ -316,9 +259,9 @@ public partial class MainForm : Form
         // Instance
         for (int i = 0; i < fileInfo.source_base.Count; i++)
         {
-            source += fileInfo.source_base[i] + "\r\n";
+            source += fileInfo.source_base[i] + Environment.NewLine;
         }
-        source += space + "{\r\n";
+        source += space + "{" + Environment.NewLine;
         return source;
     }
     private string Create_Code_Suspend_Resume(string source, List<string> lstSuspend, List<string> lstResume, string space)
@@ -328,58 +271,57 @@ public partial class MainForm : Form
         {
             if (userForm.CtrlItems[i].className!.IndexOf("Material") > -1)
             {
-                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + " = new MaterialSkin.Controls." + userForm.CtrlItems[i].className + "();\r\n";
+                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + " = new MaterialSkin.Controls." + userForm.CtrlItems[i].className + "();" + Environment.NewLine;
             }
             else
             {
-                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + " = new System.Windows.Forms." + userForm.CtrlItems[i].className + "();\r\n";
+                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + " = new System.Windows.Forms." + userForm.CtrlItems[i].className + "();" + Environment.NewLine;
             }
 
             List<string> className_group1 = new()
-                {
-                    "DataGridView",
-                    "PictureBox",
-                    "SplitContainer"
-                };
+            {
+                "DataGridView",
+                "PictureBox",
+                "SplitContainer"
+            };
             for (int j = 0; j < className_group1.Count; j++)
             {
                 if (userForm.CtrlItems[i].className == className_group1[j])
                 {
-                    lstSuspend.Add(space + "    ((System.ComponentModel.ISupportInitialize)(this." + userForm.CtrlItems[i].ctrl!.Name + ")).BeginInit();\r\n");
-                    lstResume.Add(space + "    ((System.ComponentModel.ISupportInitialize)(this." + userForm.CtrlItems[i].ctrl!.Name + ")).EndInit();\r\n");
+                    lstSuspend.Add(space + "    ((System.ComponentModel.ISupportInitialize)(this." + userForm.CtrlItems[i].ctrl!.Name + ")).BeginInit();" + Environment.NewLine);
+                    lstResume.Add(space + "    ((System.ComponentModel.ISupportInitialize)(this." + userForm.CtrlItems[i].ctrl!.Name + ")).EndInit();" + Environment.NewLine);
                 }
             }
 
             List<string> className_group2 = new()
-                {
-                    "GroupBox",
-                    "Panel",
-                    "StatusStrip",
-                    "TabControl",
-                    "TabPage"
-                };
+            {
+                "GroupBox",
+                "Panel",
+                "StatusStrip",
+                "TabControl",
+                "TabPage"
+            };
             for (int j = 0; j < className_group2.Count; j++)
             {
                 if (userForm.CtrlItems[i].className == className_group2[j])
                 {
-                    lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".SuspendLayout();\r\n");
-                    lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".ResumeLayout(false);\r\n");
+                    lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".SuspendLayout();" + Environment.NewLine);
+                    lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".ResumeLayout(false);" + Environment.NewLine);
                 }
             }
 
             if (userForm.CtrlItems[i].className == "SplitContainer")
             {
-                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.SuspendLayout();\r\n");
-                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.SuspendLayout();\r\n");
-                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".SuspendLayout();\r\n");
-                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.ResumeLayout(false);\r\n");
-                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.ResumeLayout(false);\r\n");
-                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".ResumeLayout(false);\r\n");
+                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.SuspendLayout();" + Environment.NewLine);
+                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.SuspendLayout();" + Environment.NewLine);
+                lstSuspend.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".SuspendLayout();" + Environment.NewLine);
+                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.ResumeLayout(false);" + Environment.NewLine);
+                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.ResumeLayout(false);" + Environment.NewLine);
+                lstResume.Add(space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".ResumeLayout(false);" + Environment.NewLine);
             }
         }
-        lstSuspend.Add(space + "    this.SuspendLayout();\r\n");
-        lstResume.Add(space + "    this.ResumeLayout(false);\r\n");
-
+        lstSuspend.Add(space + "    this.SuspendLayout();" + Environment.NewLine);
+        lstResume.Add(space + "    this.ResumeLayout(false);" + Environment.NewLine);
         return source;
     }
     private string Create_Code_FuncDeclaration(string source)
@@ -389,32 +331,31 @@ public partial class MainForm : Form
         {
             for (int j = 0; j < userForm.CtrlItems[i].decFunc.Count; j++)
             {
-                source += "//" + userForm.CtrlItems[i].decFunc[j] + "\r\n";
-                source += "//{\r\n";
-                source += "//\r\n";
-                source += "//}\r\n";
-                source += "\r\n";
+                source += "//" + userForm.CtrlItems[i].decFunc[j] + Environment.NewLine;
+                source += "//{" + Environment.NewLine;
+                source += "//" + Environment.NewLine;
+                source += "//}" + Environment.NewLine;
+                source += Environment.NewLine;
             }
         }
 
         // form
         for (int i = 0; i < userForm.decFunc.Count; i++)
         {
-            source += "//" + userForm.decFunc[i] + "\r\n";
-            source += "//{\r\n";
-            source += "//\r\n";
-            source += "//}\r\n";
-            source += "\r\n";
+            source += "//" + userForm.decFunc[i] + Environment.NewLine;
+            source += "//{" + Environment.NewLine;
+            source += "//" + Environment.NewLine;
+            source += "//}" + Environment.NewLine;
+            source += Environment.NewLine;
         }
-
         return source;
     }
     private string Create_Code_ControlDeclaration(string source, string space)
     {
-        source += space + "}\r\n";
-        source += "\r\n";
-        source += space + "#endregion\r\n";
-        source += "\r\n";
+        source += space + "}" + Environment.NewLine;
+        source += Environment.NewLine;
+        source += space + "#endregion" + Environment.NewLine;
+        source += Environment.NewLine;
 
         // declaration
         for (int i = 0; i < userForm!.CtrlItems.Count; i++)
@@ -429,9 +370,7 @@ public partial class MainForm : Form
             {
                 dec = split[split.Length - 1];
             }
-
-            source += space + "private " + dec + " " + userForm.CtrlItems[i].ctrl!.Name + ";\r\n";
-
+            source += space + "private " + dec + " " + userForm.CtrlItems[i].ctrl!.Name + ";" + Environment.NewLine;
         }
         return source;
     }
@@ -442,7 +381,7 @@ public partial class MainForm : Form
         {
             if (userForm.CtrlItems[i].ctrl!.Parent == userForm)
             {
-                source += space + "    this.Controls.Add(this." + userForm.CtrlItems[i].ctrl!.Name + ");\r\n";
+                source += space + "    this.Controls.Add(this." + userForm.CtrlItems[i].ctrl!.Name + ");" + Environment.NewLine;
             }
         }
         return source;
@@ -450,9 +389,9 @@ public partial class MainForm : Form
     private string Create_Code_FormProperty(string source, string space)
     {
         // form-property
-        source += space + "    //\r\n";
-        source += space + "    // form\r\n";
-        source += space + "    //\r\n";
+        source += space + "    //" + Environment.NewLine;
+        source += space + "    // form" + Environment.NewLine;
+        source += space + "    //" + Environment.NewLine;
 
         foreach (PropertyInfo item in userForm!.GetType().GetProperties())
         {
@@ -460,17 +399,15 @@ public partial class MainForm : Form
             {
                 Control? baseForm = new MaterialForm();
 
-                if (item.GetValue(userForm) != null && item.GetValue(baseForm) != null)
+                if (item.GetValue(userForm) != null && item.GetValue(baseForm) != null &&
+                    item.GetValue(userForm)!.ToString() != item.GetValue(baseForm)!.ToString())
                 {
-                    if (item.GetValue(userForm)!.ToString() != item.GetValue(baseForm)!.ToString())
-                    {
-                        string str1 = space + "    this." + item.Name;
-                        string strProperty = cls_controls.Property2String(userForm, item);
+                    string str1 = space + "    this." + item.Name;
+                    string strProperty = cls_controls.Property2String(userForm, item);
 
-                        if (strProperty != "" && item.Name != "Name" && item.Name != "Location")
-                        {
-                            source += str1 + strProperty + "\r\n";
-                        }
+                    if (strProperty != "" && item.Name != "Name" && item.Name != "Location")
+                    {
+                        source += str1 + strProperty + Environment.NewLine;
                     }
                 }
             }
@@ -484,9 +421,9 @@ public partial class MainForm : Form
         for (int i = 0; i < userForm!.CtrlItems.Count; i++)
         {
             string memCode = "";
-            source += space + "    //\r\n";
-            source += space + "    // " + userForm.CtrlItems[i].ctrl!.Name + "\r\n";
-            source += space + "    //\r\n";
+            source += space + "    //" + Environment.NewLine;
+            source += space + "    // " + userForm.CtrlItems[i].ctrl!.Name + Environment.NewLine;
+            source += space + "    //" + Environment.NewLine;
 
             source = Create_Code_AddControl(source, space, i);
 
@@ -520,11 +457,11 @@ public partial class MainForm : Form
                 {
                     if (item.Name != "SplitterDistance" && item.Name != "Anchor")
                     {
-                        source += str1 + strProperty + "\r\n";
+                        source += str1 + strProperty + Environment.NewLine;
                     }
                     else
                     {
-                        memCode += str1 + strProperty + "\r\n";
+                        memCode += str1 + strProperty + Environment.NewLine;
                     }
                 }
             }
@@ -534,7 +471,7 @@ public partial class MainForm : Form
     {
         for (int i = 0; i < cls_ctrl.decHandler.Count; i++)
         {
-            source += space + "    " + cls_ctrl.decHandler[i] + "\r\n";
+            source += space + "    " + cls_ctrl.decHandler[i] + Environment.NewLine;
         }
         return source;
     }
@@ -542,7 +479,7 @@ public partial class MainForm : Form
     {
         for (int i = 0; i < userForm.decHandler.Count; i++)
         {
-            source += space + "    " + userForm.decHandler[i] + "\r\n";
+            source += space + "    " + userForm.decHandler[i] + Environment.NewLine;
         }
         return source;
     }
@@ -553,21 +490,69 @@ public partial class MainForm : Form
         {
             if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent!.Name)
             {
-                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
+                source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");" + Environment.NewLine;
             }
             else if (userForm.CtrlItems[i].ctrl!.Name == userForm.CtrlItems[j].ctrl!.Parent!.Parent!.Name)
             {
                 if (userForm.CtrlItems[j].ctrl!.Parent!.Name.IndexOf("Panel1") > -1)
                 {
-                    source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
+                    source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel1.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");" + Environment.NewLine;
                 }
                 else if (userForm.CtrlItems[j].ctrl!.Parent!.Name.IndexOf("Panel2") > -1)
                 {
-                    source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");\r\n";
+                    source += space + "    this." + userForm.CtrlItems[i].ctrl!.Name + ".Panel2.Controls.Add(this." + userForm.CtrlItems[j].ctrl!.Name + ");" + Environment.NewLine;
                 }
             }
         }
         return source;
     }
+    // ********************************************************************************************
+    // Event Function 
+    // ********************************************************************************************
+    private void deleteToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        userForm!.RemoveSelectedItem();
+    }
+    private void closeToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        Close();
+    }
+    private void saveToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        designeTab.SelectedIndex = 0;
+        designeTab.SelectedIndex = 1;
 
+        if (sourceFileName != "")
+        {
+            cls_file.SaveAs(sourceFileName, sourceTxtBox.Text);
+        }
+        else
+        {
+            cls_file.Save(sourceTxtBox.Text);
+        }
+        Close();
+    }
+    private void openToolStripMenuItem_Click(object? sender, EventArgs e)
+    {
+        fileInfo = cls_file.OpenFile();
+        sourceFileName = fileInfo.source_FileName;
+        logTxtBox.Text = "";
+        userForm!.Add_Controls(fileInfo.ctrlInfo);
+    }
+    private void designeTab_SelectedIndexChanged(System.Object? sender, System.EventArgs e)
+    {
+        switch (designeTab.SelectedIndex)
+        {
+            case 1:
+                if (fileInfo.source_base == null)
+                {
+                    fileInfo.source_base = cls_file.NewFile();
+                }
+                sourceTxtBox.Text = Create_SourceCode();
+                break;
+            case 2:
+                eventTxtBox.Text = Create_EventCode();
+                break;
+        }
+    }
 }
