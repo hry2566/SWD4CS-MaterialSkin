@@ -19,9 +19,6 @@ namespace SWD4CS
         internal List<string> decHandler = new();
         internal List<string> decFunc = new();
 
-        // internal ImageList imgLst;
-        // private System.ComponentModel.IContainer components = null;
-
         public cls_userform()
         {
             this.FormClosing += new FormClosingEventHandler(userForm_FormClosing);
@@ -36,19 +33,6 @@ namespace SWD4CS
             materialSkinManager.AddFormToManage(this);
             materialSkinManager.Theme = MaterialSkinManager.Themes.LIGHT;
             materialSkinManager.ColorScheme = new ColorScheme(Primary.BlueGrey800, Primary.BlueGrey900, Primary.BlueGrey500, Accent.LightBlue200, TextShade.WHITE);
-
-            // 
-            // imageList1
-            // 
-            // System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
-            // this.imgLst.ColorDepth = System.Windows.Forms.ColorDepth.Depth24Bit;
-            // this.imgLst.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgLst.ImageStream")));
-            // this.imgLst.TransparentColor = System.Drawing.Color.Transparent;
-            // this.imgLst.Images.SetKeyName(0, "close_FILL1_wght400_GRAD0_opsz48.png");
-            // this.imgLst.Images.SetKeyName(1, "home_FILL1_wght400_GRAD0_opsz48.png");
-            // this.imgLst.Images.SetKeyName(2, "menu_FILL1_wght400_GRAD0_opsz48.png");
-            // this.imgLst.Images.SetKeyName(3, "settings_FILL1_wght400_GRAD0_opsz48.png");
-            // this.imgLst = new System.Windows.Forms.ImageList(this.components);
         }
 
         // ********************************************************************************************
@@ -82,7 +66,6 @@ namespace SWD4CS
                 mainForm!.toolLstBox!.SelectedIndex = 0;
             }
         }
-
         private void userForm_Resize(object? sender, EventArgs e)
         {
             if (this.WindowState == FormWindowState.Maximized ||
@@ -91,12 +74,10 @@ namespace SWD4CS
                 this.WindowState = FormWindowState.Normal;
             }
         }
-
         private void userForm_FormClosing(object? sender, FormClosingEventArgs e)
         {
             e.Cancel = true;
         }
-
         protected override void WndProc(ref Message m)
         {
             const int WM_SYSCOMMAND = 0x0112;
@@ -118,7 +99,7 @@ namespace SWD4CS
         }
 
         // ********************************************************************************************
-        // Public Function
+        // internal Function
         // ********************************************************************************************
         internal void Init(MainForm mainForm, TabPage backPanel)
         {
@@ -150,8 +131,6 @@ namespace SWD4CS
         }
         internal void CtrlAllClear()
         {
-            // CountInit();
-
             for (int i = 0; i < CtrlItems!.Count; i++)
             {
                 CtrlItems[i].Selected = true;
@@ -222,7 +201,6 @@ namespace SWD4CS
             this.Location = new Point(16, 16);
 
             // その他設定
-
             for (int i = 0; i < ctrlInfo.Count; i++)
             {
                 for (int j = 0; j < CtrlItems.Count; j++)
@@ -241,7 +219,6 @@ namespace SWD4CS
             {
                 CtrlItems[j].InitSelectBox();
             }
-
             SelectAllClear();
         }
 
