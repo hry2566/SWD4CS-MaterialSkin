@@ -11,7 +11,7 @@
 ![image](https://user-images.githubusercontent.com/86605611/214452891-82c52bb1-f195-434a-9dc2-a65be3d1e3b1.png)
   
 ## 動画
-しばらくお待ちください。  
+https://youtu.be/cBB-S12KYTQ  
   
 ## SWD4CS
 https://github.com/hry2566/SWD4CS
