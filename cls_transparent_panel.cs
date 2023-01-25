@@ -8,7 +8,6 @@ namespace SWD4CS
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer, false);
         }
-
         protected override CreateParams CreateParams
         {
             get
@@ -18,7 +17,6 @@ namespace SWD4CS
                 return result;
             }
         }
-
         protected override void OnPaintBackground(PaintEventArgs e)
         {
             using (var brush = new SolidBrush(BackColor))
