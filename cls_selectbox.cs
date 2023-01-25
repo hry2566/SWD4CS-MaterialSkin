@@ -24,6 +24,9 @@
             Init();
         }
 
+        // ********************************************************************************************
+        // private Function 
+        // ********************************************************************************************
         private void Init()
         {
             for (int i = 0; i < 8; i++)
@@ -58,60 +61,6 @@
             }
             parent.Controls.AddRange(this.selectbox);
         }
-
-        internal void SetSelectBoxPos(bool flag)
-        {
-            if (flag)
-            {
-                int x1, x2, x3, y1, y2, y3;
-
-                if (ctrl != null)
-                {
-                    if (ctrl.ctrl is TabPage)
-                    {
-                        x1 = ctrl.ctrl.Left;
-                        x2 = ctrl.ctrl.Width / 2 + ctrl.ctrl.Left - 8;
-                        x3 = ctrl.ctrl.Width + ctrl.ctrl.Left - 16;
-                        y1 = ctrl.ctrl.Top - 27;
-                        y2 = ctrl.ctrl.Height / 2 + ctrl.ctrl.Top - 35;
-                        y3 = ctrl.ctrl.Height + ctrl.ctrl.Top - 40;
-                    }
-                    else
-                    {
-                        x1 = ctrl.ctrl!.Left - 8;
-                        x2 = ctrl.ctrl!.Width / 2 + ctrl.ctrl!.Left - 4;
-                        x3 = ctrl.ctrl!.Width + ctrl.ctrl!.Left;
-                        y1 = ctrl.ctrl!.Top - 8;
-                        y2 = ctrl.ctrl!.Height / 2 + ctrl.ctrl!.Top - 4;
-                        y3 = ctrl.ctrl!.Height + ctrl.ctrl!.Top;
-                    }
-                }
-                else
-                {
-                    x1 = form!.Left - 8;
-                    x2 = form.Width / 2 + form.Left - 4;
-                    x3 = form.Width + form.Left;
-                    y1 = form.Top - 8;
-                    y2 = form.Height / 2 + form.Top - 4;
-                    y3 = form.Height + form.Top;
-                }
-
-                this.selectbox[0].Location = new Point(x1, y1);
-                this.selectbox[1].Location = new Point(x2, y1);
-                this.selectbox[2].Location = new Point(x3, y1);
-                this.selectbox[3].Location = new Point(x1, y3);
-                this.selectbox[4].Location = new Point(x2, y3);
-                this.selectbox[5].Location = new Point(x3, y3);
-                this.selectbox[6].Location = new Point(x1, y2);
-                this.selectbox[7].Location = new Point(x3, y2);
-            }
-
-            for (int i = 0; i < 8; i++)
-            {
-                this.selectbox[i].Visible = flag;
-            }
-        }
-
         private void SelectboxMouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
@@ -119,7 +68,6 @@
                 memPos = e.Location;
             }
         }
-
         private void SelectboxMouseMove(object sender, MouseEventArgs e)
         {
             var move_selectbox = (Panel)sender;
@@ -139,7 +87,6 @@
                 }
             }
         }
-
         private void SetFormSize(Point pos, int index)
         {
             Point newPos = new((int)(pos.X / grid) * grid, (int)(pos.Y / grid) * grid);
@@ -173,7 +120,6 @@
             }
             form.SetSelect(true);
         }
-
         private void SetControlSize(Point pos, int index)
         {
             Point point = new(ctrl!.ctrl!.Left, ctrl.ctrl!.Top);
@@ -240,6 +186,62 @@
             ctrl.ctrl.Size = size;
 
             ctrl.Selected = true;
+        }
+
+        // ********************************************************************************************
+        // internal Function 
+        // ********************************************************************************************
+        internal void SetSelectBoxPos(bool flag)
+        {
+            if (flag)
+            {
+                int x1, x2, x3, y1, y2, y3;
+
+                if (ctrl != null)
+                {
+                    if (ctrl.ctrl is TabPage)
+                    {
+                        x1 = ctrl.ctrl.Left;
+                        x2 = ctrl.ctrl.Width / 2 + ctrl.ctrl.Left - 8;
+                        x3 = ctrl.ctrl.Width + ctrl.ctrl.Left - 16;
+                        y1 = ctrl.ctrl.Top - 27;
+                        y2 = ctrl.ctrl.Height / 2 + ctrl.ctrl.Top - 35;
+                        y3 = ctrl.ctrl.Height + ctrl.ctrl.Top - 40;
+                    }
+                    else
+                    {
+                        x1 = ctrl.ctrl!.Left - 8;
+                        x2 = ctrl.ctrl!.Width / 2 + ctrl.ctrl!.Left - 4;
+                        x3 = ctrl.ctrl!.Width + ctrl.ctrl!.Left;
+                        y1 = ctrl.ctrl!.Top - 8;
+                        y2 = ctrl.ctrl!.Height / 2 + ctrl.ctrl!.Top - 4;
+                        y3 = ctrl.ctrl!.Height + ctrl.ctrl!.Top;
+                    }
+                }
+                else
+                {
+                    x1 = form!.Left - 8;
+                    x2 = form.Width / 2 + form.Left - 4;
+                    x3 = form.Width + form.Left;
+                    y1 = form.Top - 8;
+                    y2 = form.Height / 2 + form.Top - 4;
+                    y3 = form.Height + form.Top;
+                }
+
+                this.selectbox[0].Location = new Point(x1, y1);
+                this.selectbox[1].Location = new Point(x2, y1);
+                this.selectbox[2].Location = new Point(x3, y1);
+                this.selectbox[3].Location = new Point(x1, y3);
+                this.selectbox[4].Location = new Point(x2, y3);
+                this.selectbox[5].Location = new Point(x3, y3);
+                this.selectbox[6].Location = new Point(x1, y2);
+                this.selectbox[7].Location = new Point(x3, y2);
+            }
+
+            for (int i = 0; i < 8; i++)
+            {
+                this.selectbox[i].Visible = flag;
+            }
         }
     }
 }
