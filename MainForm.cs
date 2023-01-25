@@ -555,4 +555,12 @@ public partial class MainForm : Form
                 break;
         }
     }
+    private void nameTxtBox_TextChanged(System.Object? sender, System.EventArgs e)
+    {
+        if (propertyGrid!.SelectedObject != null && propertyGrid.SelectedObject is Form == false)
+        {
+            Control? ctrl = propertyGrid.SelectedObject as Control;
+            ctrl!.Name = propertyCtrlName!.Text;
+        }
+    }
 }
