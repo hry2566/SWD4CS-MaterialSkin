@@ -1,7 +1,7 @@
 # SWD4CS-MaterialSkin
  * SWD4CSをベースにMaterialSkin2用を作ってみました。  
  * SWD4CSより機能は省略されています。  
- * MaterialSkin2ってdotnet6/7対応してる？  
+ * MaterialSkin2って開発終了してる？  
   
 ## 開発環境
  * Windows11 Home  
